@@ -1,40 +1,33 @@
-import { Component } from 'react'; //для классового компонента
-import { createPortal } from 'react-dom'; // для рендеринга в другом месте
-import css from './Modal.module.css'; // стилизация
+     import React, { useEffect } from 'react';
+     import { createPortal } from 'react-dom';
+     import css from './Modal.module.css';
 
-// Поиск модалки, чтобы динамически добавить к DOM-дереву страницы
-const modalRoot = document.querySelector('#root');
+         const modalRoot = document.querySelector('#root'); // Выбор элемента с ID 'root' в качестве корневого элемента модального окна
 
-export class Modal extends Component {
+      export const Modal = ({ closeModal, children }) => { // Определение функционального компонента с именем Modal и пропсами closeModal и children
+     useEffect(() => {
+      const keyDown = (evt) => { // Обработчик события keydown
+      if (evt.code === 'Escape') { // Проверка, является ли нажатая клавиша 'Escape'
+      closeModal(); // Закрытие модального окна путем вызова функции closeModal
+      }
+      };
+        window.addEventListener('keydown', keyDown);  // Добавление слушателя события keydown к окну
 
-  // регистрирует обработчик события keydown на окне браузера
-  componentDidMount() {
-    window.addEventListener('keydown', this.keyDown); // при нажатии клавиши Escape вызывает функцию keyDown
-  }
+      return () => {
+      window.removeEventListener('keydown', keyDown);  // Удаление слушателя события keydown при размонтировании компонента
+            };
+            }, [closeModal]);
 
-  keyDown = evt => {
-    // проверка кода клавиши
-    if (evt.code === 'Escape') {
-      this.props.closeModal(); // закрытие модалки
-    }
-  };
+     const handleClose = (evt) => { // Обработчик события click
+     if (evt.currentTarget === evt.target) { // Проверка, является ли кликнутый элемент самим оверлеем
+     closeModal(); // Закрытие модального окна путем вызова функции closeModal
+     }
+     };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.keyDown); // удаляет обработчик события keydown из окна браузера
-  }
-
-  // закрытие модалки по клику на бэкдроп
-  handleClose = (evt) => {
-
-    // проверка или клик был по бэкдропу
-    if (evt.currentTarget === evt.target) {
-      this.props.closeModal(); // закрытие модалки
-    }
-  }
-
-  render() {
-    return createPortal(<div onClick={this.handleClose} className={css.Overlay}>
-      <div className={css.Modal}>{this.props.children}</div> {/*рендеринг дочерних элементов */}
-    </div>, modalRoot)
-  }
-}
+return createPortal(
+     <div onClick={handleClose} className={css.Overlay}> 
+     <div className={css.Modal}>{children}</div> 
+     </div>,
+     modalRoot // Рендеринг содержимого модального окна внутри элемента modalRoot
+     );
+     };

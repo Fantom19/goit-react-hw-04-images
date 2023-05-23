@@ -1,148 +1,105 @@
-import { Component } from 'react';
-import { Toaster } from 'react-hot-toast'; 
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { getSearch } from '../Api/Api'; 
-import { Searchbar } from './Searchbar/Searchbar'; 
-import { Button } from 'components/Button/Button';
-import { Loader } from 'components/Loader/Loader'; 
-import { Modal } from './Modal/Modal';
+      import React, { useState, useEffect } from 'react';
+      import { Toaster } from 'react-hot-toast';
+      import { ImageGallery } from './ImageGallery/ImageGallery'; 
+      import { getSearch } from '../Api/Api'; 
+      import { Searchbar } from './Searchbar/Searchbar'; 
+      import { Button } from 'components/Button/Button'; 
+      import { Loader } from 'components/Loader/Loader'; 
+      import { Modal } from './Modal/Modal'; 
 
-export class App extends Component {
-  state = {
-    search: '',
-    images: [],
-    page: 1,
-    total: 1,
-    loading: false, 
-    error: null,
-    showModal: false,
-    empty: false, 
-  };
+             const App = () => {
+      const [search, setSearch] = useState(''); // Создание состояния search с начальным значением ''
+    const [images, setImages] = useState([]); // Создание состояния images с начальным значением пустого массива
+      const [page, setPage] = useState(1); // Создание состояния page с начальным значением 1
+    const [total, setTotal] = useState(1); // Создание состояния total с начальным значением 1
+      const [loading, setLoading] = useState(false); // Создание состояния loading с начальным значением false
+    const [error, setError] = useState(null); // Создание состояния error с начальным значением null
+       const [showModal, setShowModal] = useState(false); // Создание состояния showModal с начальным значением false
+    const [empty, setEmpty] = useState(false); // Создание состояния empty с начальным значением false
+      const [largeImageURL, setLargeImageURL] = useState(''); // Создание состояния largeImageURL с начальным значением ''
+    const [alt, setAlt] = useState(''); // Создание состояния alt с начальным значением ''
 
-  // Вызывается после того, как компонент был смонтирован.
-  // Параметр '_' содержит предварительные пропы компонента, а PrevState - предыдущее состояние компонента.
-  componentDidUpdate(_, PrevState) {
+        useEffect(() => {
+          getFunc(search, page); // Вызов функции getFunc при изменении состояний search и page
+        }, [search, page]);
 
-    // Проверяем, изменились ли пропы search или page.
-    if (
-      PrevState.search !== this.state.search ||
-      PrevState.page !== this.state.page
-    ) {
-      this.getFunc(this.state.search, this.state.page);
-    }
-  }
+  const getFunc = (text, page) => {
+    setLoading(true); // Установка значения состояния loading в true
 
-  getFunc = (text, page) => {
-    this.setState({ loading: true }); // включаем индикатор загрузки
-
-    // Вызываем функцию getSearch, выполняющую запрос на сервер.
-    getSearch(text, page)
-      .then(resp => resp.json()) // превращаем в JSON
+    getSearch(text, page) // Вызов функции getSearch с передачей аргументов text и page
+      .then(resp => resp.json()) // Преобразование ответа в JSON формат
       .then(data => {
-
-        // Проверяем, есть ли результаты поиска пустыми.
         if (data.hits.length === 0) {
-          this.setState({ empty: true }); // включаем флаг, показывающий, есть ли результаты поиска пустыми
+          setEmpty(true); // Установка значения состояния empty в true, если длина массива hits равна 0
         }
-        this.setState(prevSt => ({
-          page: prevSt.page,
-          images: [...prevSt.images, ...data.hits], // добавляем новые картинки в массив.
-          total: data.total,
-        }));
+        setImages(prevImages => [...prevImages, ...data.hits]); // Добавление новых изображений в состояние images
+        setTotal(data.total); // Установка значения состояния total
       })
       .catch(error => {
-        this.setState({ error: error.message }); // записываем ошибку в стейт
+        setError(error.message); // Установка значения состояния error в сообщение об ошибке
       })
       .finally(() => {
-        this.setState({ loading: false }); // выключаем индикатор загрузки
+        setLoading(false); // Установка значения состояния loading в false
       });
   };
 
-  // Функция, вызываемая при нажатии кнопки Load more.
-  clickLoad = () => {
-    this.setState(prevSt => ({
-      page: prevSt.page + 1, // увеличиваем номер страницы на +1
-    }));
+  const clickLoad = () => {
+    setPage(prevPage => prevPage + 1); // Увеличение значения состояния page на 1
   };
 
-  // Функция, вызываемая при нажатии на картинку.
-  openModal = (largeImageURL, alt) => {
-
-    // Используем setState с функцией, которая принимает прежнее состояние и возвращает новое.
-    this.setState(({ showModal }) => {
-      return { showModal: !showModal, largeImageURL, alt };
-    });
+  const openModal = (largeImageURL, alt) => {
+    setShowModal(prevShowModal => !prevShowModal); // Инвертирование значения состояния showModal
+    setLargeImageURL(largeImageURL); // Установка значения состояния largeImageURL
+    setAlt(alt); // Установка значения состояния alt
   };
 
-  // Функция, вызываемая при нажатии на кнопку "Search".
-  handleSubmit = search => {
-    // Очищаем массив с картинками, а также ставим исходные значения для страницы,
-    // общего количества картинок, флагов и ошибок
-    this.setState({
-      search,
-      images: [],
-      page: 1,
-      total: 1,
-      loading: false,
-      error: null,
-      empty: false,
-    });
+  const handleSubmit = search => {
+    setSearch(search); 
+    setImages([]); 
+    setPage(1); 
+    setTotal(1); 
+    setLoading(false); 
+    setError(null); 
+    setEmpty(false); 
   };
 
-  // Функция, вызываемая при нажатии кнопки "Close".
-  closeModal = () => {
-
-    // Используем setState с функцией, которая принимает прежнее состояние и возвращает новое.
-    this.setState(({ showModal }) => {
-      return { showModal: !showModal };
-    });
+  const closeModal = () => {
+    setShowModal(prevShowModal => !prevShowModal); // Инвертирование значения состояния showModal
   };
 
-  render() {
-    const { error, loading, images, total, page } = this.state;
-    return (
-      <div>
+  return (
+    <div>
+      <Toaster
+        toastOptions={{
+          duration: 1500,
+        }}
+      />
 
-        {/* Всплывающее сообщение */}
-        <Toaster
-          toastOptions={{
-            duration: 1500,
-          }}
-        />
+      <Searchbar handleSubmit={handleSubmit} />
 
-        {/* текстовое поле для ввода запроса */}
-        <Searchbar handleSubmit={this.handleSubmit} />
+      {error && <h2 style={{ textAlign: 'center' }}>Something went wrong: ({error})!</h2>}
 
-        {/* Проверяем, есть ли ошибка */}
-        {error && (
-          <h2 style={{ textAlign: 'center' }}>
-            Something went wrong: ({error})!
-          </h2>
-        )}
+      <ImageGallery toggleModal={openModal} images={images} />
 
-        {/* отображение списка изображений */}
-        <ImageGallery togleModal={this.openModal} images={images} />
+      {loading && <Loader />}
 
-        {/* Проверяем, происходит ли загрузка */}
-        {loading && <Loader />}
+      {empty && <h2 style={{ textAlign: 'center' }}>Sorry. There are no images ...</h2>}
 
-        {/* Проверяем, есть ли результаты поиска пустыми */}
-        {this.state.empty && (
-          <h2 style={{ textAlign: 'center' }}>
-            Sorry. There are no images ... 
-          </h2>
-        )}
+      {total / 12 > page && <Button clickLoad={clickLoad} />}
 
-        {/* Проверяем, нужно ли отображать кнопку "Load more" */}
-        {total / 12 > page && <Button clickLoad={this.clickLoad} />}
+      {showModal && (
+        <Modal closeModal={closeModal}>
+          <img src={largeImageURL} alt={alt} />
+        </Modal>
+      )}
+    </div>
+  );
+};
 
-        {/* Проверяем, нужно ли отображать модальное окно */}
-        {this.state.showModal && (
-          <Modal closeModal={this.closeModal}>
-            <img src={this.state.largeImageURL} alt={this.state.alt} />
-          </Modal>
-        )}
-      </div>
-    );
-  }
-}
+export default App;
+
+
+
+
+
+

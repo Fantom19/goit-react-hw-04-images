@@ -2,10 +2,10 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem'; // эл
 import PropTypes from 'prop-types'; // типизация пропсов
 import css from './ImageGallery.module.css'; // импортируем стили
 //Функциональный компонент, отвечающий за галерею.
-export const ImageGallery = ({ images, togleModal }) => {
+export const ImageGallery = ({ images, toggleModal }) => {
   return (
       <ul className={css.gallery}>
-        <ImageGalleryItem togleModal={togleModal} images={images} />
+        <ImageGalleryItem toggleModal={toggleModal} images={images} />
       </ul>
   );
 };
@@ -13,5 +13,5 @@ export const ImageGallery = ({ images, togleModal }) => {
 //типизация пропсов
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired, //массив объектов
-  togleModal: PropTypes.func.isRequired // функция
+  toggleModal: PropTypes.func.isRequired // функция
 };
