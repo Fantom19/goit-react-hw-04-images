@@ -20,6 +20,9 @@
     const [alt, setAlt] = useState(''); // Создание состояния alt с начальным значением ''
 
         useEffect(() => {
+          if(!search){
+            return
+          }
           const getFunc = (text, page) => {
             setLoading(true); // Установка значения состояния loading в true
         
