@@ -84,7 +84,7 @@
 
       {loading && <Loader />}
 
-      {empty && <h2 style={{ textAlign: 'center' }}>Sorry. There are no images ...</h2>}
+      {empty && <h2 style={{ textAlign: 'center' }}>Sorry. There are no images &#128540;...</h2>}
 
       {total / 12 > page && <Button clickLoad={clickLoad} />}
 
