@@ -1,22 +1,22 @@
-      import React, { useState, useEffect } from 'react';
-      import { Toaster } from 'react-hot-toast';
-      import { ImageGallery } from './ImageGallery/ImageGallery'; 
-      import { getSearch } from '../Api/Api'; 
-      import { Searchbar } from './Searchbar/Searchbar'; 
-      import { Button } from 'components/Button/Button'; 
-      import { Loader } from 'components/Loader/Loader'; 
-      import { Modal } from './Modal/Modal'; 
+  import React, { useState, useEffect } from 'react';
+  import { Toaster } from 'react-hot-toast';
+  import { ImageGallery } from './ImageGallery/ImageGallery'; 
+  import { getSearch } from '../Api/Api'; 
+  import { Searchbar } from './Searchbar/Searchbar'; 
+  import { Button } from 'components/Button/Button'; 
+  import { Loader } from 'components/Loader/Loader'; 
+  import { Modal } from './Modal/Modal'; 
 
-             const App = () => {
-      const [search, setSearch] = useState(''); // Создание состояния search с начальным значением ''
+      const App = () => {
+    const [search, setSearch] = useState(''); // Создание состояния search с начальным значением ''
     const [images, setImages] = useState([]); // Создание состояния images с начальным значением пустого массива
-      const [page, setPage] = useState(1); // Создание состояния page с начальным значением 1
+    const [page, setPage] = useState(1); // Создание состояния page с начальным значением 1
     const [total, setTotal] = useState(1); // Создание состояния total с начальным значением 1
-      const [loading, setLoading] = useState(false); // Создание состояния loading с начальным значением false
+    const [loading, setLoading] = useState(false); // Создание состояния loading с начальным значением false
     const [error, setError] = useState(null); // Создание состояния error с начальным значением null
-       const [showModal, setShowModal] = useState(false); // Создание состояния showModal с начальным значением false
+    const [showModal, setShowModal] = useState(false); // Создание состояния showModal с начальным значением false
     const [empty, setEmpty] = useState(false); // Создание состояния empty с начальным значением false
-      const [largeImageURL, setLargeImageURL] = useState(''); // Создание состояния largeImageURL с начальным значением ''
+    const [largeImageURL, setLargeImageURL] = useState(''); // Создание состояния largeImageURL с начальным значением ''
     const [alt, setAlt] = useState(''); // Создание состояния alt с начальным значением ''
 
         useEffect(() => {
