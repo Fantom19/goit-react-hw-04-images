@@ -24,7 +24,6 @@
             setLoading(true); // Установка значения состояния loading в true
         
             getSearch(text, page) // Вызов функции getSearch с передачей аргументов text и page
-              // Преобразование ответа в JSON формат
               .then(data => {
                 if (data.hits.length === 0) {
                   setEmpty(true)
