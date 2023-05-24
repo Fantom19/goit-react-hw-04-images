@@ -15,5 +15,6 @@ export const getSearch = (searchText, page) => {
     per_page: PICS_ON_PAGE,
   });
 
-  return fetch(`${BASE_URL}?${params}`);
+  return fetch(`${BASE_URL}?${params}`)
+  .then(resp => resp.json());
 };

@@ -20,28 +20,30 @@
     const [alt, setAlt] = useState(''); // Создание состояния alt с начальным значением ''
 
         useEffect(() => {
+          const getFunc = (text, page) => {
+            setLoading(true); // Установка значения состояния loading в true
+        
+            getSearch(text, page) // Вызов функции getSearch с передачей аргументов text и page
+              // Преобразование ответа в JSON формат
+              .then(data => {
+                if (data.hits.length === 0) {
+                  setEmpty(true)
+                  return; // Установка значения состояния empty в true, если длина массива hits равна 0
+                }
+                setImages(prevImages => [...prevImages, ...data.hits]); // Добавление новых изображений в состояние images
+                setTotal(data.total); // Установка значения состояния total
+              })
+              .catch(error => {
+                setError(error.message); // Установка значения состояния error в сообщение об ошибке
+              })
+              .finally(() => {
+                setLoading(false); // Установка значения состояния loading в false
+              });
+          };
+
           getFunc(search, page); // Вызов функции getFunc при изменении состояний search и page
         }, [search, page]);
 
-  const getFunc = (text, page) => {
-    setLoading(true); // Установка значения состояния loading в true
-
-    getSearch(text, page) // Вызов функции getSearch с передачей аргументов text и page
-      .then(resp => resp.json()) // Преобразование ответа в JSON формат
-      .then(data => {
-        if (data.hits.length === 0) {
-          setEmpty(true); // Установка значения состояния empty в true, если длина массива hits равна 0
-        }
-        setImages(prevImages => [...prevImages, ...data.hits]); // Добавление новых изображений в состояние images
-        setTotal(data.total); // Установка значения состояния total
-      })
-      .catch(error => {
-        setError(error.message); // Установка значения состояния error в сообщение об ошибке
-      })
-      .finally(() => {
-        setLoading(false); // Установка значения состояния loading в false
-      });
-  };
 
   const clickLoad = () => {
     setPage(prevPage => prevPage + 1); // Увеличение значения состояния page на 1
